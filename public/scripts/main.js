@@ -66,7 +66,11 @@ var downloadFileBegin = function(filePath) {
   document.body.appendChild(iframeDivDL);
 
   //start download
-  window.location = filePath;
+  let link=document.createElement('a');
+  link.href = filePath;
+  link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+  link.click();
+  //window.location = filePath;
 
   let iframeFileDL = '<iframe id="iframeFileDL" src="about:blank" onload="downloadFileStarting()"></iframe>';
   iframeDivDL.innerHTML = iframeFileDL;
