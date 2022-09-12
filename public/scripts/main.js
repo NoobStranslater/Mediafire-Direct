@@ -1,5 +1,3 @@
-// Constants
-
 /* Code modified by NoobStranslater (@NoobStranslater)
  * Copyright (C) 2020  Andrew Larson (thealiendrew@gmail.com)
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +20,7 @@ const validMediafireShortDL = /^(https?:\/\/)?(www\.)?mediafire\.com\/\?[a-zA-Z0
 const validMediafireLongDL = /^(https?:\/\/)?(www\.)?mediafire\.com\/(file|view|download)\/[a-zA-Z0-9]+(\/[a-zA-Z0-9_\-\.~%]+)?(\/file)?$/m;
 const checkHTTP = /^https?:\/\//m;
 const paramDL_initialDelay = 1; // ms
-const paramDL_loadDelay = 1750; // ms
+const paramDL_loadDelay = 1850; // ms
 
 // Browser Detection Variables
 var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
@@ -77,19 +75,6 @@ var downloadFileBegin = function(filePath) {
 
 };
 
-
-var validationChecker = function(url) {
-  let validatedURL = validMediafireIdentifierDL.test(url) || validMediafireShortDL.test(url) || validMediafireLongDL.test(url);
-
-  // Test if the new value is a valid link, to enable the download button
-  if (url) {
-    // check if we have valid url
-    if (validatedURL) { return true; } 
-    else { return false; }
-  } 
-  else { return false; }
-};
-
 var attemptDownloadRedirect = async function(url) {
 
   // modify the link to work with proxy
@@ -97,7 +82,7 @@ var attemptDownloadRedirect = async function(url) {
   // if it's just the download identifier, add on mediafire pre-link
   if (validMediafireIdentifierDL.test(url)) url = 'https://mediafire.com/file/' + url + '/';
   // if the link doesn't have http(s), it needs to be appended
-  if (!checkHTTP.test(url)) url = 'https://' + url;
+  else if (!validMediafireShortDL.test(url)) url = 'https://mediafire.com/file/' + url;
 
   console.log(`Checking "${url}" for valid download page...`);
   // try and get the mediafire page to get actual download link
@@ -138,12 +123,11 @@ window.addEventListener('load', function() {
   //assigns query strings variables
   let vars = getQueryStringArray();
   let paramURL = vars.var + vars.val + vars.str;
+  if(vars.name){ paramURL += '/' + vars.name;}
   if (paramURL) {
     fromParameters = true;
     console.log(`Validating "${paramURL}" as valid Mediafire download...`);
   }
   // run checker once on after parameter check
-  if (validationChecker(paramURL)) {
-    attemptDownloadRedirect(paramURL);
-  }
+  attemptDownloadRedirect(paramURL);
 });
